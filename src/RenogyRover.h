@@ -39,6 +39,13 @@ enum FaultCode {
     CHARGE_MOS_SHORT = 16384
 };
 
+struct ControllerLoadState {
+    bool active;
+    float voltage;
+    float current;
+    float power;
+};
+
 struct PanelState {
     float voltage;
     float current;
@@ -91,6 +98,7 @@ class RenogyRover {
         const char* getLastModbusError();
 
         int getProductModel(char*& productModel);
+        int getControllerLoadState(ControllerLoadState* state);
         int getPanelState(PanelState* state);
         int getBatteryState(BatteryState* state);
         int getDayStatistics(DayStatistics* dayStats);

@@ -73,6 +73,37 @@ int RenogyRover::getProductModel(char*& productModel) {
     return 1;
 }
 
+int RenogyRover::getControllerLoadState(ControllerLoadState* state) {
+    state->active = 0;
+    state->voltage  = 0;
+    state->current = 0;
+    state->power = 0;
+
+    int registerBase = 0x0104;
+    int registerLength = 3;
+    int registerLoadActiveBase = 0x010A;
+    int registerLoadActiveLength = 1;
+
+    uint16_t* valueLoadActive = new uint16_t[registerLoadActiveLength];
+    uint16_t* values = new uint16_t[registerLength];
+
+    if (!_readHoldingRegisters(registerLoadActiveBase, registerLoadActiveLength, valueLoadActive)) {
+        return 0;
+    } else {
+        state->active = (int16_t) valueLoadActive[0];
+    }
+
+    if (!_readHoldingRegisters(registerBase, registerLength, values)) {
+        return 0;
+    } else {
+        state->voltage = (int16_t) values[0] * 0.1f;
+        state->current = (int16_t) values[1] * 0.01f;
+        state->power = (int16_t) values[2];
+    }
+
+    return 1;
+}
+
 int RenogyRover::getPanelState(PanelState* state) {
     state->chargingPower = 0;
     state->current = 0;
